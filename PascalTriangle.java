@@ -6,13 +6,14 @@ public class PascalTriangle {
         
 		int [] prevRow=new int[] {1};
 		
+		int noOfRows=8;
 	
 		  // Print the first few rows of Pascal's Triangle
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < noOfRows; i++) {
             // Print the current row
         	
         	
-            printRow(prevRow,6-i);
+            printRow(prevRow,noOfRows-i);
             // Get the next row
             prevRow = getNextRow(prevRow);
         }
