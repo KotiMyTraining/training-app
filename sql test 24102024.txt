@@ -1,0 +1,143 @@
+Retrieve the first 5 employees by highest salary.
+
+ans) select * from employees order by salary desc LIMIT 5;
+
+=============================================================================
+
+Retrieve the 5 employees with the lowest salary, skipping the first 10 records.
+
+ans) select * from employees order by salary asc offset 10;
+
+==========================================================================================
+
+
+Display each department's total salary, but only show departments where the total salary exceeds $30,000.
+
+ans) select d.department_name ,e.salary from departments d 
+join employees e on d.department_id=e.department_id where d.department_name='Marketing'
+
+=================================================================================================
+
+For each employee, display their salary and a note if it is above or below $7000.
+
+ans)
+
+select *,
+case 
+when salary>7000 then "above 7000"
+when salary<7000 then "below 7000"
+else "no salary"
+end as sal_status
+ from employees
+ 
+ 
+ ====================================================================================================
+ 
+ List the projects that started in the last 6 months.
+ 
+ ans)SELECT project_name, project_id
+FROM projects
+WHERE start_date <= DATE_SUB(CURDATE(), INTERVAL 6 MONTH);
+
+=======================================================================================================
+
+Display all projects, including those with no employees assigned.
+
+ans)SELECT p.project_id, p.project_name, e.employee_id, e.first_name, e.last_name
+FROM projects p
+LEFT JOIN employeeprojects ep ON p.project_id = ep.project_id
+LEFT JOIN employees e ON e.employee_id = ep.employee_id;
+
+=======================================================================================================
+
+
+Increase the salary of all employees in the 'Finance' department by 12%.
+
+update  employees e join departments d on e.department_id=d.department_id set e.salary=e.salary*1.12
+where d.department_name="finance";
+
+=================================================================================================
+
+Retrieve the first and last names of employees whose last names start with 'S'.
+
+select first_name,last_name from employees where last_name like 's%'
+
+=======================================================================================================
+
+
+Count the number of employees assigned to each department.
+
+select count(e.employee_id) ,d.department_name from 
+employees e join departments d on e.department_id=d.department_id
+group by d.department_name
+
+============================================================================================
+
+Find the total number of hours worked by employees on each project.
+
+select e.employee_id,e.first_name,p.project_id,p.project_name,sum(ep.hours_worked) as total_hours  from
+employees e join employeeprojects ep on e.employee_id=ep.employee_id
+join projects p on p.project_id=ep.project_id group by e.employee_id,e.first_name,p.project_id,p.project_name
+
+==================================================================================================================
+
+
+Select the employees who earn more than the average salary.
+
+select employee_id,first_name,salary from employees where salary>(select avg(salary) from employees);
+
+==========================================================================================
+
+
+Display each project's start date in the format 'Month Day, Year' (e.g., January 01, 2024).
+
+SELECT DATE_FORMAT(start_date, '%M%d,%Y') AS formatted_date from projects;
+
+=========================================================================================
+
+
+List all employees, their department names, and the projects they have worked on.
+
+
+select e.employee_id,e.first_name,e.last_name,d.department_name,p.project_id,p.project_name from employees e
+join departments d on e.department_id=d.department_id
+join employeeprojects ep on e.employee_id=ep.employee_id
+join projects p on p.project_id=ep.project_id
+=======================================================================================================
+
+
+List all projects, showing 'Assigned' if any employees are assigned and 'Unassigned' otherwise.
+
+
+SELECT p.project_id, p.project_name,
+CASE 
+    WHEN ep.project_id IS NOT NULL THEN 'Assigned'
+    ELSE 'Unassigned'
+END AS assignment_status
+FROM projects p
+RIGHT JOIN employeeprojects ep ON p.project_id = ep.project_id;
+
+=================================================================================================================
+
+Find the average salary of employees in each department, but only show departments where more than 5 employees work.
+
+
+select avg(e.salary) ,count(e.employee_id) as count ,d.department_name 
+ from employees e join departments d on e.department_id=d.department_id 
+ group by d.department_name having count>5;
+ ========================================================================================================================
+ 
+Concatenate employees' first and last names into a single full name, separated by a space.
+
+select first_name,last_name ,concat(first_name, '  ',last_name) as full_name from employees;
+
+======================================================================================================================
+
+
+
+
+
+
+
+
+
