@@ -132,10 +132,41 @@ Concatenate employees' first and last names into a single full name, separated b
 select first_name,last_name ,concat(first_name, '  ',last_name) as full_name from employees;
 
 ======================================================================================================================
+Set all employees with salaries above $8000 and belonging to the 'IT' department to a new salary of $8500.
 
 
+update employees e join departments d on e.department_id=d.department_id set e.salary=8500 
+where e.salary >5000 and d.department_name='finance'
+
+================================================================================================================
+
+Find the employee with the highest salary who works in the 'HR' department.
+
+select * from employees e join departments d on e.department_id=d.department_id 
+where salary= (select max(salary) from employees e join departments d 
+on e.department_id=d.department_id  where department_name='HR');
+
+=================================================================================================================
+
+Find employees who have been assigned to projects that will end within the next 2 months.
+
+SELECT e.employee_id, e.first_name, e.last_name, p.project_name, p.end_date
+FROM employees e
+JOIN employeeprojects ep ON e.employee_id = ep.employee_id
+
+====================================================================================================================
 
 
+For each project, show the total salary billed based on the hours worked by employees, but only for projects where total billing exceeds $10,000.
+
+
+select p.project_id,p.project_name,sum(e.salary *ep.hours_worked) as total_sal from projects p 
+join employeeprojects ep on p.project_id=ep.project_id
+join employees e on e.employee_id=ep.employee_id
+group by p.project_id,p.project_name having total_sal>10000
+
+JOIN projects p ON ep.project_id = p.project_id
+WHERE p.end_date <= DATE_ADD(CURDATE(), INTERVAL 2 MONTH);
 
 
 
