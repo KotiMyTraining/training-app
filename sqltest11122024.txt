@@ -71,4 +71,12 @@ HAVING
     COUNT(ep.project_id) > 1;
 	
 ================================================================================================	=============
-	
+Detect Salary gaps
+hint: you want to compare the average salary between departments.
+
+SELECT d.name AS department_name, 
+       AVG(e.salary) AS average_salary, 
+       MAX(e.salary) - MIN(e.salary) AS salary_gap
+FROM employees e
+JOIN departments d ON e.department_id = d.id
+GROUP BY d.name;
