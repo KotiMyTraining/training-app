@@ -1,0 +1,74 @@
+assignment queries
+
+q)In Employees_Projects table some rows reference employees who no longer exist in the employees table. Remove these orphaned rows
+
+
+DELETE FROM Employees_Projects
+WHERE EmployeeID NOT IN (SELECT EmployeeID FROM Employees WHERE EmployeeID IS NOT NULL);
+
+==========================================================================================================================
+orderId
+custId
+orderDate
+
+q) delete duplicate rows when id is exists
+
+DELETE o1 FROM orders o1 JOIN 
+(
+SELECT MIN(orderId) AS orderId,
+                       custId,
+					   orderDate 
+					   FROM orders GROUP BY custId, orderDate HAVING COUNT(*) > 1
+) AS duplicates 
+ON o1.custId = duplicates.custId AND o1.orderDate = duplicates.orderDate WHERE o1.orderId != duplicates.orderId;
+
+============================================================================================================================
+
+q) delete rows when id is not exists employee_projects many to many relation ship
+
+start TRANSACTION;
+ 
+create table temp_ep(project_id int, employee_id int);
+ 
+-- with temp_ep_cte as (
+  insert into temp_ep(project_id, employee_id)
+  select project_id, employee_id from (
+    select *, row_number() over(partition by project_id, employee_id) as row_num
+    from employees_projects
+    group by project_id, employee_id) as subquery
+  where row_num = 1;
+-- )
+ 
+-- select * from temp_ep;
+ 
+delete from employees_projects;
+ 
+insert into employees_projects (project_id, employee_id)
+select project_id, employee_id from temp_ep;
+ 
+commit;
+
+==========================================================================================================
+	
+	
+	
+q)Employees working on more than 1 project
+
+SELECT 
+    e.id AS EmployeeID, 
+    e.first_name, 
+    e.last_name, 
+    COUNT(ep.project_id) AS ProjectCount
+FROM 
+    employees e
+JOIN 
+    employees_projects ep 
+ON 
+    e.id = ep.employee_id
+GROUP BY 
+    e.id, e.first_name, e.last_name
+HAVING 
+    COUNT(ep.project_id) > 1;
+	
+================================================================================================	=============
+	
