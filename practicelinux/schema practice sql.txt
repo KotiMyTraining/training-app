@@ -1,0 +1,290 @@
+CREATE TABLE Employees (
+    employee_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    department_id INT,
+    hire_date DATE NOT NULL,
+    salary DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES Departments(department_id)
+);
+
+CREATE TABLE Departments (
+    department_id INT PRIMARY KEY AUTO_INCREMENT,
+    department_name VARCHAR(100) NOT NULL,
+    manager_id INT,
+    CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES Employees(employee_id)
+);
+
+CREATE TABLE Projects (
+    project_id INT PRIMARY KEY AUTO_INCREMENT,
+    project_name VARCHAR(100) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE
+);
+
+Add
+50-70 rows
+in the
+Projects
+table with projects spanning different dates and durations.
+
+CREATE TABLE Employee_Projects (
+    employee_id INT NOT NULL,
+    project_id INT NOT NULL,
+    hours_logged DECIMAL(6,2) DEFAULT 0.00,
+    allocation_date DATE NOT NULL,
+    PRIMARY KEY (employee_id, project_id),
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id),
+    FOREIGN KEY (project_id) REFERENCES Projects(project_id)
+);
+
+Populate the
+Employee_Projects
+table to create realistic many-to-many mappings, ensuring some employees work on multiple projects and others on none.
+
+CREATE TABLE Transactions (
+    transaction_id INT PRIMARY KEY AUTO_INCREMENT,
+    employee_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    transaction_date DATE NOT NULL,
+    transaction_type VARCHAR(50) NOT NULL,
+    FOREIGN KEY (employee_id) REFERENCES Employees(employee_id)
+	
+	Insert
+200 rows
+into the
+Transactions
+table with salary, bonus, and deduction transactions spread across employees.
+	
+	
+	INSERT INTO Departments (department_id, department_name, manager_id)
+VALUES 
+(1, 'Human Resources', NULL),
+(2, 'Finance', NULL),
+(3, 'Engineering', NULL),
+(4, 'Marketing', NULL),
+(5, 'Sales', NULL);
+
+
+INSERT INTO Employees (first_name, last_name, department_id, hire_date, salary)
+VALUES 
+('John', 'Smith', 1, '2023-01-15', 60000.00),
+('Jane', 'Doe', 2, '2022-07-10', 55000.00),
+('Mike', 'Johnson', 3, '2021-05-20', 75000.00),
+('Emily', 'Davis', 4, '2020-11-30', 80000.00),
+('Chris', 'Brown', 5, '2024-03-01', 65000.00),
+('Sarah', 'Wilson', 1, '2023-02-28', 70000.00),
+('David', 'Martinez', 2, '2022-08-12', 72000.00),
+('Anna', 'Taylor', 3, '2021-09-15', 54000.00),
+('James', 'Anderson', 4, '2020-03-25', 58000.00),
+('Laura', 'Thomas', 5, '2024-01-01', 62000.00),
+('Kevin', 'White', 1, '2023-06-10', 68000.00),
+('Sophia', 'Harris', 2, '2022-04-12', 72000.00),
+('Daniel', 'Clark', 3, '2021-11-15', 51000.00),
+('Olivia', 'Lewis', 4, '2020-06-05', 60000.00),
+('Ethan', 'Walker', 5, '2024-04-10', 56000.00),
+('Isabella', 'Hall', 1, '2023-09-15', 74000.00),
+('Mason', 'Allen', 2, '2022-02-20', 52000.00),
+('Ava', 'Young', 3, '2021-01-12', 66000.00),
+('Elijah', 'King', 4, '2020-10-10', 57000.00),
+('Mia', 'Scott', 5, '2024-02-01', 63000.00),
+('Lucas', 'Adams', 1, '2023-03-12', 58000.00),
+('Charlotte', 'Baker', 2, '2022-11-15', 76000.00),
+('Liam', 'Gonzalez', 3, '2021-08-05', 80000.00),
+('Amelia', 'Nelson', 4, '2020-07-20', 59000.00),
+('William', 'Carter', 5, '2024-01-20', 73000.00),
+('Harper', 'Mitchell', 1, '2023-05-10', 65000.00),
+('Benjamin', 'Perez', 2, '2022-03-05', 69000.00),
+('Evelyn', 'Roberts', 3, '2021-06-15', 51000.00),
+('Henry', 'Turner', 4, '2020-09-18', 62000.00),
+('Abigail', 'Phillips', 5, '2024-03-12', 59000.00),
+('Sebastian', 'Campbell', 1, '2023-07-20', 70000.00),
+('Emily', 'Collins', 2, '2022-12-10', 52000.00),
+('Madison', 'Stewart', 3, '2021-02-25', 74000.00),
+('Jack', 'Morris', 4, '2020-12-15', 68000.00),
+('Sofia', 'Rogers', 5, '2024-04-15', 56000.00),
+('Alexander', 'Reed', 1, '2023-10-05', 66000.00),
+('Ella', 'Cook', 2, '2022-06-30', 62000.00),
+('Logan', 'Morgan', 3, '2021-03-12', 70000.00),
+('Grace', 'Bell', 4, '2020-02-20', 73000.00),
+('Carter', 'Murphy', 5, '2024-01-10', 64000.00),
+('Lily', 'Bailey', 1, '2023-08-05', 58000.00),
+('Aiden', 'Rivera', 2, '2022-05-28', 76000.00),
+('Ella', 'Cooper', 3, '2021-04-15', 72000.00),
+('Zoe', 'Richardson', 4, '2020-08-10', 67000.00),
+('Luke', 'Howard', 5, '2024-02-28', 61000.00);
+INSERT INTO Employees (first_name, last_name, department_id, hire_date, salary) 
+VALUES
+('Liam', 'Evans', 1, '2023-02-10', 62000.00),
+('Emma', 'Ward', 2, '2022-03-15', 75000.00),
+('Noah', 'Peterson', 3, '2021-04-20', 54000.00),
+('Olivia', 'Gray', 4, '2020-05-25', 59000.00),
+('William', 'Sanders', 5, '2024-06-01', 67000.00),
+('Sophia', 'Price', 1, '2023-03-01', 61000.00),
+('James', 'Bennett', 2, '2022-04-10', 70000.00),
+('Isabella', 'Wood', 3, '2021-05-15', 58000.00),
+('Benjamin', 'James', 4, '2020-06-20', 64000.00),
+('Mia', 'Ross', 5, '2024-07-15', 73000.00),
+('Lucas', 'Foster', 1, '2023-04-25', 72000.00),
+('Amelia', 'Collins', 2, '2022-05-30', 56000.00),
+('Henry', 'Morris', 3, '2021-06-12', 60000.00),
+('Harper', 'Coleman', 4, '2020-07-05', 58000.00),
+('Evelyn', 'Butler', 5, '2024-08-10', 69000.00),
+('Alexander', 'Bailey', 1, '2023-05-18', 55000.00),
+('Ava', 'Reyes', 2, '2022-06-25', 63000.00),
+('Elijah', 'Murphy', 3, '2021-07-30', 62000.00),
+('Charlotte', 'Bell', 4, '2020-08-15', 72000.00),
+('Mason', 'Jenkins', 5, '2024-09-01', 68000.00),
+('Ella', 'Powell', 1, '2023-06-05', 57000.00),
+('Logan', 'Russell', 2, '2022-07-12', 75000.00),
+('Grace', 'Griffin', 3, '2021-08-22', 58000.00),
+('Carter', 'Hayes', 4, '2020-09-10', 67000.00),
+('Sofia', 'Hughes', 5, '2024-10-15', 60000.00),
+('Oliver', 'Long', 1, '2023-07-18', 71000.00),
+('Chloe', 'Myers', 2, '2022-08-25', 53000.00),
+('Daniel', 'Flores', 3, '2021-09-30', 68000.00),
+('Scarlett', 'Diaz', 4, '2020-10-10', 74000.00),
+('Matthew', 'Ward', 5, '2024-11-01', 66000.00),
+('Victoria', 'Simmons', 1, '2023-08-20', 57000.00),
+('Jack', 'Perry', 2, '2022-09-15', 69000.00),
+('Avery', 'Stevens', 3, '2021-10-22', 56000.00),
+('Lillian', 'Adams', 4, '2020-11-05', 60000.00),
+('Sebastian', 'Cooper', 5, '2024-12-01', 74000.00),
+('Zoey', 'Cruz', 1, '2023-09-25', 62000.00),
+('Jacob', 'Turner', 2, '2022-10-10', 57000.00),
+('Riley', 'Mitchell', 3, '2021-11-15', 71000.00),
+('Hannah', 'Fisher', 4, '2020-12-20', 69000.00),
+('Ethan', 'Baker', 5, '2024-12-15', 64000.00),
+('Addison', 'White', 1, '2023-10-12', 63000.00),
+('David', 'Ramirez', 2, '2022-11-18', 68000.00),
+('Leah', 'Brooks', 3, '2021-12-30', 57000.00),
+('Joseph', 'Kelly', 4, '2020-01-05', 73000.00),
+('Natalie', 'Howard', 5, '2024-01-20', 70000.00),
+('Samuel', 'Sanders', 1, '2023-11-15', 66000.00),
+('Zoey', 'Cook', 2, '2022-12-10', 54000.00),
+('Dylan', 'Gonzalez', 3, '2021-01-12', 60000.00),
+('Aria', 'Reed', 4, '2020-02-15', 59000.00),
+('Julian', 'Bennett', 5, '2024-02-01', 74000.00);
+
+
+
+
+
+
+
+
+);
+
+
+INSERT INTO Projects (project_name, start_date, end_date) 
+VALUES 
+('Project Alpha', '2023-01-01', '2023-06-30'),
+('Project Beta', '2023-02-15', '2023-07-15'),
+('Project Gamma', '2023-03-10', '2023-09-10'),
+('Project Delta', '2023-04-05', '2023-10-05'),
+('Project Epsilon', '2023-05-01', '2023-11-01'),
+('Project Zeta', '2023-06-20', '2023-12-20'),
+('Project Eta', '2023-07-10', '2024-01-10'),
+('Project Theta', '2023-08-15', '2024-02-15'),
+('Project Iota', '2023-09-01', '2024-03-01'),
+('Project Kappa', '2023-10-01', '2024-04-01'),
+('Project Lambda', '2023-11-10', '2024-05-10'),
+('Project Mu', '2023-12-05', '2024-06-05'),
+('Project Nu', '2024-01-15', '2024-07-15'),
+('Project Xi', '2024-02-01', '2024-08-01'),
+('Project Omicron', '2024-03-01', '2024-09-01'),
+('Project Pi', '2024-04-10', '2024-10-10'),
+('Project Rho', '2024-05-05', '2024-11-05'),
+('Project Sigma', '2024-06-15', '2024-12-15'),
+('Project Tau', '2024-07-20', '2025-01-20'),
+('Project Upsilon', '2024-08-01', '2025-02-01'),
+('Project Phi', '2024-09-10', '2025-03-10'),
+('Project Chi', '2024-10-01', '2025-04-01'),
+('Project Psi', '2024-11-15', '2025-05-15'),
+('Project Omega', '2024-12-05', '2025-06-05'),
+('Project Phoenix', '2025-01-15', '2025-07-15'),
+('Project Titan', '2025-02-10', '2025-08-10'),
+('Project Apollo', '2025-03-01', '2025-09-01'),
+('Project Orion', '2025-04-20', '2025-10-20'),
+('Project Andromeda', '2025-05-05', '2025-11-05'),
+('Project Pegasus', '2025-06-10', '2025-12-10'),
+('Project Draco', '2025-07-01', '2026-01-01'),
+('Project Hydra', '2025-08-15', '2026-02-15'),
+('Project Centaurus', '2025-09-01', '2026-03-01'),
+('Project Virgo', '2025-10-05', '2026-04-05'),
+('Project Scorpio', '2025-11-01', '2026-05-01'),
+('Project Aries', '2025-12-10', '2026-06-10'),
+('Project Aquarius', '2026-01-15', '2026-07-15'),
+('Project Capricorn', '2026-02-05', '2026-08-05'),
+('Project Leo', '2026-03-10', '2026-09-10'),
+('Project Cancer', '2026-04-01', '2026-10-01'),
+('Project Libra', '2026-05-15', '2026-11-15'),
+('Project Sagittarius', '2026-06-05', '2026-12-05'),
+('Project Taurus', '2026-07-01', '2027-01-01'),
+('Project Gemini', '2026-08-20', '2027-02-20'),
+('Project Virgo', '2026-09-10', '2027-03-10'),
+('Project Sagittarius', '2026-10-15', '2027-04-15'),
+('Project Capricornus', '2026-11-05', '2027-05-05'),
+('Project Aries II', '2026-12-10', '2027-06-10'),
+('Project Libra II', '2027-01-20', '2027-07-20'),
+('Project Scorpio II', '2027-02-01', '2027-08-01'),
+('Project Leo II', '2027-03-10', '2027-09-10'),
+('Project Pisces', '2027-04-15', '2027-10-15');
+
+
+
+INSERT INTO Employee_Projects (employee_id, project_id, hours_logged, allocation_date)
+VALUES
+(46, 1, 120.50, '2023-01-15'),
+(47, 2, 110.00, '2023-02-01'),
+(48, 3, 125.75, '2023-03-05'),
+(49, 4, 130.00, '2023-04-10'),
+(50, 5, 105.50, '2023-05-15'),
+(51, 6, 110.00, '2023-06-01'),
+(52, 7, 115.25, '2023-07-10'),
+(53, 8, 120.00, '2023-08-15'),
+(54, 9, 125.00, '2023-09-01'),
+(55, 10, 130.50, '2023-10-05'),
+(56, 11, 135.00, '2023-11-15'),
+(57, 12, 140.00, '2023-12-01'),
+(58, 13, 125.50, '2024-01-05'),
+(59, 14, 130.00, '2024-02-01'),
+(60, 15, 140.75, '2024-03-10'),
+(61, 16, 110.25, '2024-04-01'),
+(62, 17, 115.00, '2024-05-15'),
+(63, 18, 120.50, '2024-06-10'),
+(64, 19, 125.00, '2024-07-20'),
+(65, 20, 130.00, '2024-08-15'),
+(66, 21, 140.25, '2024-09-01'),
+(67, 22, 135.50, '2024-10-05'),
+(68, 23, 120.00, '2024-11-15'),
+(69, 24, 110.50, '2024-12-01'),
+(70, 25, 115.25, '2024-01-20'),
+(71, 26, 120.00, '2024-02-10'),
+(72, 27, 130.50, '2024-03-05'),
+(73, 28, 135.00, '2024-04-01'),
+(74, 29, 140.25, '2024-05-10'),
+(75, 30, 145.00, '2024-06-20'),
+(76, 31, 120.50, '2024-07-15'),
+(77, 32, 115.00, '2024-08-05'),
+(78, 33, 110.00, '2024-09-10'),
+(79, 34, 125.75, '2024-10-01'),
+(80, 35, 130.25, '2024-11-15'),
+(81, 36, 135.00, '2024-12-05'),
+(82, 37, 140.50, '2024-01-15'),
+(83, 38, 120.25, '2024-02-01'),
+(84, 39, 115.50, '2024-03-10'),
+(85, 40, 110.00, '2024-04-05'),
+(86, 41, 130.00, '2024-05-15'),
+(87, 42, 125.00, '2024-06-20'),
+(88, 43, 135.25, '2024-07-10'),
+(89, 44, 140.50, '2024-08-01'),
+(90, 45, 120.75, '2024-09-15'),
+(91, 46, 115.00, '2024-10-05'),
+(92, 47, 130.00, '2024-11-20'),
+(93, 48, 140.25, '2024-12-15'),
+(94, 49, 125.50, '2024-01-10'),
+(95, 50, 130.75, '2024-02-25');
+
+
+
