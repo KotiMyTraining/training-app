@@ -1,0 +1,89 @@
+
+Concept Notes
+1. User Creation
+
+Command: useradd
+Used to create a new user account.
+Options:
+-m: Creates the user's home directory.
+-s: Specifies the login shell (e.g., /bin/bash).
+-d: Defines a custom home directory.
+-p: Sets an encrypted password.
+
+
+Command Example:
+useradd -m -s /bin/bash -p <encrypted-password> newuser
+passwd newuser  # Set or update the password
+
+2. Adding a User to a Group
+Command: usermod
+Used to modify user properties.
+Options:
+-aG: Adds a user to a new group without removing from existing groups.
+Command Example:
+usermod -aG groupname username
+
+3. User Deletion
+Command: userdel
+Used to delete a user account.
+Options:
+-r: Removes the user’s home directory and mail spool.
+Command Example:
+userdel -r username
+
+4. Listing Users and Groups
+To list all users: cat /etc/passwd
+To list groups: cat /etc/group
+
+
+    User Management in Linux
+                         |
+    -------------------------------------------------
+   |                        |                        |
+User Creation       Adding to Group           User Deletion
+   |                        |                        |
+ useradd -m             usermod -aG               userdel -r
+   |                        |                        |
+Options: -m, -s, -p   Example:                Removes user and
+Example:              usermod -aG             home directory
+useradd -m -s         groupname username      Example:
+/bin/bash username                             userdel -r username
+
+
+
+cron jobs
+
+ Concept: Cron Jobs in Linux
+Subnodes:
+Crontab Files
+
+/etc/crontab (system-wide)
+crontab -e (user-specific)
+Cron Syntax
+
+Format: minute hour day month day-of-week command
+Example: 30 2 * * 1 echo "Message"
+Commands
+
+crontab -e: Edit crontab.
+crontab -l: List jobs.
+crontab -r: Remove jobs.
+Scheduling Sample Job
+
+Command: echo "This is a sample job" > output.txt
+Cron Entry: * * * * * echo "Sample" > /path/to/output.txt
+Logs
+
+Path: /var/log/syslog or /var/log/cron.
+
+Cron Jobs in Linux
+                                   |
+         ------------------------------------------------------
+        |                  |                  |              |
+  Crontab Files        Syntax            Commands        Logs
+        |                  |                  |              |
+  /etc/crontab    minute hour day       crontab -e      /var/log/syslog
+  crontab -e      month day-of-week     crontab -l      /var/log/cron
+                  Example:              crontab -r
+                  * * * * * echo
+                  "Message"
