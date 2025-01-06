@@ -1,0 +1,11 @@
+#!/bin/bash
+counter=0
+ 
+while [ $counter -le 10 ]; do
+ 
+         memory_usage=$( top -b -n 1| awk '/MiB Mem/ {print " total memory " $4, " free memory " $6, " used memory " $8}')
+    echo "memory usage is : $memory_usage"
+ 
+ 
+    counter=$((counter+1))
+done

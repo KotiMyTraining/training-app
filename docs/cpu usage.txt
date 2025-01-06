@@ -1,0 +1,11 @@
+#!/bin/bash
+counter=0
+ 
+while [ $counter -le 10 ]; do
+ 
+    cpu_usage=$( top -b -n 1| awk '/%Cpu/ {print $2+$4+$6}' )
+    echo "cpu usage is : $cpu_usage"
+ 
+ 
+    counter=$((counter+1))
+done
