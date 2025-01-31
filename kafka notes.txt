@@ -1,0 +1,222 @@
+**Kafka Complete Tutorial with Spring Boot Example**
+
+## 1. Introduction to Kafka
+Kafka is a distributed event streaming platform used for high-performance data pipelines, streaming analytics, and event-driven architectures. It supports two messaging models:
+
+### Kafka Messaging Models:
+- **Publish-Subscribe**: Multiple consumers subscribe to a topic and receive messages independently.
+- **Point-to-Point (Work Queue Model)**: Messages are distributed among consumers in a consumer group, ensuring that a message is processed only once.
+
+## 2. Kafka Core Components
+- **Producer**: Publishes messages to Kafka topics.
+- **Consumer**: Subscribes to topics and processes messages.
+- **Broker**: Manages message storage and replication.
+- **Topic**: Logical grouping of messages.
+- **Partition**: Ensures scalability by distributing topic data.
+- **Consumer Group**: Enables parallel processing of messages.
+
+## 3. Kafka Configuration Parameters
+### **Producer Configuration**
+- `acks`: Determines how many acknowledgments the producer waits for (`0`, `1`, `all`).
+- `linger.ms`: Adds delay before sending batches to improve throughput.
+- `batch.size`: Controls the maximum size of a batch.
+- `compression.type`: Enables message compression (`none`, `gzip`, `snappy`, `lz4`, `zstd`).
+- `retries`: Specifies the number of retry attempts for message delivery.
+- `key.serializer` & `value.serializer`: Defines how messages are serialized.
+
+### **Consumer Configuration**
+- `group.id`: Identifies the consumer group.
+- `auto.offset.reset`: Defines offset behavior (`latest`, `earliest`).
+- `enable.auto.commit`: Automatically commits offsets if set to `true`.
+- `key.deserializer` & `value.deserializer`: Deserializes consumed messages.
+
+## 4. Kafka Compression
+### **Why Use Compression?**
+- Reduces the size of messages sent over the network.
+- Improves throughput by sending fewer bytes.
+- Reduces storage requirements on Kafka brokers.
+
+### **How to Enable Compression in Kafka Producer?**
+Modify the Kafka producer configuration:
+```yaml
+spring:
+  kafka:
+    producer:
+      compression-type: gzip
+```
+Supported compression types:
+- `gzip`: High compression, but slower.
+- `snappy`: Faster compression, lower CPU usage.
+- `lz4`: Low latency, suitable for real-time applications.
+- `zstd`: High compression with good performance.
+
+## 5. Spring Boot Kafka Implementation
+### **Step 1: Add Kafka Dependencies**
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-kafka</artifactId>
+</dependency>
+```
+
+### **Step 2: Configure Kafka Producer and Consumer**
+```yaml
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      acks: all
+      retries: 3
+      linger.ms: 5
+      compression-type: gzip
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: my-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+```
+
+### **Step 3: Create Kafka Producer**
+```java
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+import java.util.concurrent.CompletableFuture;
+
+@Service
+public class KafkaProducer {
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    
+    public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+    
+    public void sendMessage(String topic, String message) {
+        CompletableFuture<Void> future = kafkaTemplate.send(topic, message).completable()
+            .thenAccept(result -> System.out.println("Message sent successfully to " + result.getRecordMetadata().topic()))
+            .exceptionally(ex -> {
+                System.err.println("Message failed due to: " + ex.getMessage());
+                return null;
+            });
+    }
+}
+```
+
+### **Step 4: Create Kafka Consumer**
+```java
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
+import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.stereotype.Service;
+import org.apache.kafka.common.TopicPartition;
+import org.springframework.kafka.core.KafkaTemplate;
+
+@Service
+public class KafkaConsumer {
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    public KafkaConsumer(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+    
+    @KafkaListener(topics = "my_topic", groupId = "my-group")
+    public void consume(String message, @Header("kafka_receivedPartitionId") int partition) {
+        try {
+            if (message.contains("error")) {
+                throw new RuntimeException("Processing error");
+            }
+            System.out.println("Received: " + message + " from partition: " + partition);
+        } catch (Exception ex) {
+            System.err.println("Error processing message: " + message);
+            kafkaTemplate.send("dead_letter_topic", message);
+        }
+    }
+}
+
+
+
+public void consumeMessagesFromOffset(String topic, int partition, long startOffset, long endOffset) {
+    Properties props = new Properties();
+    props.put("bootstrap.servers", "localhost:9092");
+    props.put("group.id", "manual-consumer");
+    props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+    props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+    KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+    TopicPartition topicPartition = new TopicPartition(topic, partition);
+    consumer.assign(Collections.singletonList(topicPartition));
+
+    // Seek to the specified start offset (Offset 2)
+    consumer.seek(topicPartition, startOffset);
+
+    while (true) {
+        for (ConsumerRecord<String, String> record : consumer.poll(100)) {
+            System.out.println("Consumed message: " + record.value() + " from offset: " + record.offset());
+            
+            // Stop consuming when reaching offset 10
+            if (record.offset() >= endOffset) {
+                System.out.println("Reached the specified end offset. Exiting.");
+                consumer.close();
+                return;
+            }
+        }
+    }
+}
+===================================================
+in java 17
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Properties;
+
+public class KafkaOffsetConsumer {
+
+    public void consumeMessagesFromOffset(String topic, int partition, long startOffset, long endOffset) {
+        Properties props = new Properties();
+        props.put("bootstrap.servers", "localhost:9092");
+        props.put("group.id", "manual-consumer");
+        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("enable.auto.commit", "false"); // Disable auto-commit for manual control
+        
+        try (var consumer = new KafkaConsumer<String, String>(props)) { // Using `var` for brevity
+            var topicPartition = new TopicPartition(topic, partition);
+            consumer.assign(Collections.singletonList(topicPartition));
+
+            // Seek to the specified start offset
+            consumer.seek(topicPartition, startOffset);
+
+            while (true) {
+                var records = consumer.poll(Duration.ofMillis(100)); // Using `Duration.ofMillis`
+                for (ConsumerRecord<String, String> record : records) {
+                    System.out.println("Consumed message: %s from offset: %d".formatted(record.value(), record.offset()));
+
+                    // Stop consuming when reaching offset 10
+                    if (record.offset() >= endOffset) {
+                        System.out.println("Reached the specified end offset. Exiting.");
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+### **Conclusion**
+This tutorial covered:
+1. Kafka messaging models (Publish-Subscribe & Point-to-Point)
+2. Producer & Consumer configurations
+3. Compression for optimizing large messages
+4. Exception handling using CompletableFuture for the producer
+5. Dead Letter Queue (DLQ) for failed messages on the consumer side
+6. Spring Boot integration with Kafka
+
+This ensures reliability, scalability, and fault tolerance in a distributed environment.
+
